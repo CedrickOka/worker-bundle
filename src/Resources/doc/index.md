@@ -44,7 +44,9 @@ return [
 
 ### Step 3: Use the bundle is simple
 
-Now that the bundle is installed. 
+Now that the bundle is installed.
+
+Create worker class.
 
 ```php
 // App\Worker\Worker.php
@@ -53,11 +55,22 @@ namespace App\Worker;
 
 use Oka\WorkerBundle\AbstractWorker;
 
-class Worker extends AbstractWorker
+class FooWorker extends AbstractWorker
 {
+    public static function getName(): string
+	{
+		return 'foo';
+	}
+	
     protected function doRun(array $options = []): bool
 	{
 		//...
 	}
 }
+```
+
+Use the command line interface.
+
+```sh
+php bin/console oka:worker:run-worker foo
 ```
