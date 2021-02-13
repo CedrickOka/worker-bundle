@@ -1,0 +1,20 @@
+services:
+    oka_worker.abstract_worker:
+        abstract: true
+        arguments: ['@event_dispatcher']
+
+    Oka\WorkerBundle\EventListener\DispatchPcntlSignalListener:
+        tags: ['kernel.event_subscriber']
+
+    Oka\WorkerBundle\Command\RunWorkerCommand:
+        arguments:
+          - !tagged_locator {tag: 'oka_worker.worker', index_by: 'name', default_index_method: 'getName'}
+          - '@event_dispatcher'
+          - ''
+        tags: ['console.command']
+
+    Oka\WorkerBundle\Command\StopWorkersCommand:
+        arguments: ['@event_dispatcher']
+        tags: ['console.command']
+
+    Oka\WorkerBundle\AbstractWorker: '@oka_worker.abstract_worker'
