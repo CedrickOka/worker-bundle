@@ -20,12 +20,10 @@ abstract class AbstractWorker implements WorkerInterface
         $this->eventDispatcher = $eventDispatcher;
     }
     
-    /**
-     * Receive the messages and dispatch them to the bus.
-     *
-     * Valid options are:
-     *  * sleep (default: 1000000): Time in microseconds to sleep after no messages are found
-     */
+    public function beforeRun(): void
+    {
+    }
+    
     public function run(array $options = []): void
     {
         $options = array_merge([
@@ -45,6 +43,10 @@ abstract class AbstractWorker implements WorkerInterface
         }
         
         $this->dispatchEvent(new WorkerStoppedEvent($this));
+    }
+    
+    public function afterRun(): void
+    {
     }
     
     public function stop(): void
