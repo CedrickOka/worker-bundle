@@ -2,7 +2,6 @@
 
 namespace Oka\WorkerBundle\DependencyInjection\Compiler;
 
-use Oka\WorkerBundle\EventListener\DispatchRestartSignalListener;
 use Oka\WorkerBundle\EventListener\StopWorkerOnRestartSignalListener;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -24,11 +23,8 @@ class CachePoolServicePass implements CompilerPassInterface
 			return;
 		}
 		
-		$dispatchRestartSignalListenerDefnition = $container->setDefinition(
-		    DispatchRestartSignalListener::class, 
-		    new Definition(DispatchRestartSignalListener::class, [new Reference($cachePoolId)])
-	    );
-		$dispatchRestartSignalListenerDefnition->addTag('kernel.event_subscriber');
+		$workerManagerDefnition = $container->getDefinition('oka_worker.worker_manager');
+		$workerManagerDefnition->addArgument(new Reference($cachePoolId));
 		
 		$stopWorkerOnRestartSignalListenerDefnition = $container->setDefinition(
 		    StopWorkerOnRestartSignalListener::class,

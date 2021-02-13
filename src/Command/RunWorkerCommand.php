@@ -2,10 +2,10 @@
 
 namespace Oka\WorkerBundle\Command;
 
-use Oka\WorkerBundle\AbstractWorker;
 use Oka\WorkerBundle\EventListener\StopWorkerOnLoopLimitListener;
 use Oka\WorkerBundle\EventListener\StopWorkerOnMemoryLimitListener;
 use Oka\WorkerBundle\EventListener\StopWorkerOnTimeLimitListener;
+use Oka\WorkerBundle\Service\WorkerManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
@@ -16,7 +16,6 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -27,15 +26,15 @@ class RunWorkerCommand extends Command
 {
     protected static $defaultName = 'oka:worker:run-worker';
     
-    private $workerLocator;
+    private $workerManager;
     private $eventDispatcher;
     private $logger;
 
-    public function __construct(ServiceLocator $workerLocator, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger = null)
+    public function __construct(WorkerManager $workerManager, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger = null)
     {
         parent::__construct();
         
-        $this->workerLocator = $workerLocator;
+        $this->workerManager = $workerManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->logger = $logger;
     }
@@ -134,16 +133,7 @@ EOF
             $io->comment('Re-run the command with a -vv option to see logs about consumed messages.');
         }
 
-        /** @var \Oka\WorkerBundle\WorkerInterface $worker */
-        $worker = $this->workerLocator->get($input->getArgument('workerName'));
-        
-        if (!$worker instanceof AbstractWorker) {
-            throw new \LogicException(sprintf('The worker "%s" class must be extend "%s" class for use this command.', get_class($worker), AbstractWorker::class));
-        }
-        
-        $worker->run([
-            'sleep' => $input->getOption('sleep') * 1000000,
-        ]);
+        $this->workerManager->execute($input->getArgument('workerName'));
 
         return 0;
     }

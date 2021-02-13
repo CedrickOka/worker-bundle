@@ -2,11 +2,11 @@
 
 namespace Oka\WorkerBundle\DependencyInjection\Compiler;
 
+use Oka\WorkerBundle\Command\RunWorkerCommand;
+use Oka\WorkerBundle\EventListener\StopWorkerOnRestartSignalListener;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Oka\WorkerBundle\EventListener\StopWorkerOnRestartSignalListener;
-use Oka\WorkerBundle\Command\RunWorkerCommand;
 
 /**
  * @author Cedrick Oka Baidai <okacedrick@gmail.com>
@@ -26,10 +26,10 @@ class LoggerServicePass implements CompilerPassInterface
 		if (true === $container->hasDefinition(StopWorkerOnRestartSignalListener::class)) {
 		    $container
 		      ->getDefinition(StopWorkerOnRestartSignalListener::class)
-		      ->replaceArgument(1, new Reference($loggerId));
+		      ->addArgument(new Reference($loggerId));
 		}
 		
 		$runWorkerCommandDefinition = $container->getDefinition(RunWorkerCommand::class);
-		$runWorkerCommandDefinition->replaceArgument(2, new Reference($loggerId));
+		$runWorkerCommandDefinition->addArgument(new Reference($loggerId));
 	}
 }

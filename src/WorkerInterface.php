@@ -10,7 +10,7 @@ interface WorkerInterface
     /**
      * Execute before run.
      */
-    public function beforeRun(): void;
+    public function beforeRun(array $options = []): void;
     
     /**
      * Execute worker logic on each loop.
@@ -23,7 +23,7 @@ interface WorkerInterface
     /**
      * Execute after run.
      */
-    public function afterRun(): void;
+    public function afterRun(array $options = []): void;
     
     /**
      * Stop the worker

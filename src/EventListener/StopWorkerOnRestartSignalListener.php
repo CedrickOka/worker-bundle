@@ -14,6 +14,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
 {
+    public const RESTART_REQUESTED_TIMESTAMP_KEY = 'oka_worker.workers.restart_requested_timestamp';
+    
     private $cachePool;
     private $logger;
     private $workerStartedAt;
@@ -52,8 +54,8 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
     {
         $cacheItem = $this->cachePool->getItem(
             null === $workerName ?
-            DispatchRestartSignalListener::RESTART_REQUESTED_TIMESTAMP_KEY :
-            sprintf('%s.%s', DispatchRestartSignalListener::RESTART_REQUESTED_TIMESTAMP_KEY, $workerName)
+            self::RESTART_REQUESTED_TIMESTAMP_KEY :
+            sprintf('%s.%s', self::RESTART_REQUESTED_TIMESTAMP_KEY, $workerName)
         );
         
         if (false === $cacheItem->isHit()) {

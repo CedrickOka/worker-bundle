@@ -2,14 +2,13 @@
 
 namespace Oka\WorkerBundle\Command;
 
-use Oka\WorkerBundle\Event\StopWorkerEvent;
+use Oka\WorkerBundle\Service\WorkerManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @author Cedrick Oka Baidai <okacedrick@gmail.com>        
@@ -18,13 +17,13 @@ class StopWorkersCommand extends Command
 {
     protected static $defaultName = 'oka:worker:stop-worker';
 
-    private $eventDispatcher;
+    private $workerManager;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(WorkerManager $workerManager)
     {
         parent::__construct();
         
-        $this->eventDispatcher = $eventDispatcher;
+        $this->workerManager = $workerManager;
     }
 
     /**
@@ -57,7 +56,7 @@ EOF
     {
         $io = new SymfonyStyle($input, $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output);
 
-        $this->eventDispatcher->dispatch(new StopWorkerEvent($input->getArgument('workerName')));
+        $input->getArgument('workerName') ? $this->workerManager->stopOne($input->getArgument('workerName')) : $this->workerManager->stopAll();
 
         $io->success('Signal successfully sent to stop any running workers.');
 

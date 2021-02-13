@@ -20,7 +20,7 @@ abstract class AbstractWorker implements WorkerInterface
         $this->eventDispatcher = $eventDispatcher;
     }
     
-    public function beforeRun(): void
+    public function beforeRun(array $options = []): void
     {
     }
     
@@ -45,7 +45,7 @@ abstract class AbstractWorker implements WorkerInterface
         $this->dispatchEvent(new WorkerStoppedEvent($this));
     }
     
-    public function afterRun(): void
+    public function afterRun(array $options = []): void
     {
     }
     
