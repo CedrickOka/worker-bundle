@@ -5,6 +5,7 @@ namespace Oka\WorkerBundle\Tests\Command;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
  * @author Cedrick Oka Baidai <okacedrick@gmail.com>
@@ -33,14 +34,54 @@ class RunWorkerCommandTest extends KernelTestCase
     /**
      * @covers
      */
-    public function testThatRunWorkerWithTimeLimitOfThreeSeconds()
+    public function testThatCanRunWorkerWithTimeLimitOfThreeSeconds()
     {
         $this->commandTester->execute([
             'workerName' => 'noop',
-            '--time-limit' => 3
+            '--time-limit' => 1
         ]);
         
         $output = $this->commandTester->getDisplay();
-        $this->assertContains('been running for 3s', $output);
+        $this->assertStringContainsString('been running for 1s', $output);
+    }
+    
+    /**
+     * @covers
+     */
+    public function testThatCanRunWorkerWithMemoryLimitOfOneMegaOctet()
+    {
+        $this->commandTester->execute([
+            'workerName' => 'noop',
+            '--memory-limit' => '1M'
+        ]);
+        
+        $output = $this->commandTester->getDisplay();
+        $this->assertStringContainsString('exceeded 1M of memory', $output);
+    }
+    
+    /**
+     * @covers
+     */
+    public function testThatCanRunWorkerWithLoopLimitOfTenLoops()
+    {
+        $this->commandTester->execute([
+            'workerName' => 'noop',
+            '--limit' => '10'
+        ]);
+        
+        $output = $this->commandTester->getDisplay();
+        $this->assertStringContainsString('processed 10 loops', $output);
+    }
+    
+    /**
+     * @covers
+     */
+    public function testThatCannotRunWorkerWithNameNotFound()
+    {
+        $this->expectException(ServiceNotFoundException::class);
+        
+        $this->commandTester->execute([
+            'workerName' => 'test'
+        ]);
     }
 }

@@ -5,6 +5,7 @@ namespace Oka\WorkerBundle;
 use Oka\WorkerBundle\DependencyInjection\Compiler\CachePoolServicePass;
 use Oka\WorkerBundle\DependencyInjection\Compiler\LoggerServicePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -16,7 +17,7 @@ class OkaWorkerBundle extends Bundle
     {
         parent::build($container);
         
-        $container->addCompilerPass(new CachePoolServicePass(), '', 10);
-        $container->addCompilerPass(new LoggerServicePass(), '', 5);
+        $container->addCompilerPass(new CachePoolServicePass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 10);
+        $container->addCompilerPass(new LoggerServicePass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 5);
     }
 }

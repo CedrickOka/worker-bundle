@@ -10,7 +10,6 @@ services:
         arguments:
           - !tagged_locator {tag: 'oka_worker.worker', index_by: 'name', default_index_method: 'getName'}
           - '@event_dispatcher'
-          - ''
         tags: ['console.command']
 
     Oka\WorkerBundle\Command\StopWorkersCommand:

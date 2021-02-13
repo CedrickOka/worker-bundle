@@ -29,3 +29,4 @@ services:
     Oka\WorkerBundle\Test\TestWorker:
         arguments:
           - '@event_dispatcher'
+        tags: ['oka_worker.worker']
