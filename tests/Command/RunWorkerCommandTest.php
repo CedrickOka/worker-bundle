@@ -38,7 +38,8 @@ class RunWorkerCommandTest extends KernelTestCase
     {
         $this->commandTester->execute([
             'workerName' => 'noop',
-            '--time-limit' => 1
+            '--time-limit' => 1,
+            '--extras' => ['x=n', 'y=n']
         ]);
         
         $output = $this->commandTester->getDisplay();

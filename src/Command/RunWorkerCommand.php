@@ -51,6 +51,7 @@ class RunWorkerCommand extends Command
                 new InputOption('memory-limit', 'm', InputOption::VALUE_REQUIRED, 'The memory limit the worker can consume'),
                 new InputOption('time-limit', 't', InputOption::VALUE_REQUIRED, 'The time limit in seconds the worker can run'),
                 new InputOption('sleep', null, InputOption::VALUE_REQUIRED, 'Seconds to sleep before asking for new task after no messages were found', 1),
+                new InputOption('extras', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Extra options to pass to the worker during run'),
             ])
             ->setDescription('Runs worker')
             ->setHelp(<<<EOF
@@ -69,6 +70,10 @@ Use the --memory-limit option to stop the worker if it exceeds a given memory us
 Use the --time-limit option to stop the worker when the given time limit (in seconds) is reached:
 
     <info>php %command.full_name% <workerName> --time-limit=3600</info>
+
+Use the --extras option to define options to pass to the worker during run:
+
+    <info>php %command.full_name% <workerName> --extras=name=value</info>
 EOF
             )
         ;
@@ -132,8 +137,20 @@ EOF
         if (OutputInterface::VERBOSITY_VERBOSE > $output->getVerbosity()) {
             $io->comment('Re-run the command with a -vv option to see logs about consumed messages.');
         }
+        
+        $options = [];
+        
+        if (false === empty($input->getOption('extras'))) {
+            foreach ($input->getOption('extras') as $value) {
+                $option = explode('=', $value);
+                
+                if (true === isset($option[0]) && true === isset($option[0])) {
+                    $options[$option[0]] = $option[1];
+                }
+            }
+        }
 
-        $this->workerManager->execute($input->getArgument('workerName'));
+        $this->workerManager->execute($input->getArgument('workerName'), $options);
 
         return 0;
     }
