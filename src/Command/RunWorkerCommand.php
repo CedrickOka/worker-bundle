@@ -138,7 +138,9 @@ EOF
             $io->comment('Re-run the command with a -vv option to see logs about consumed messages.');
         }
         
-        $options = [];
+        $options = [
+            'sleep' => $input->getOption('sleep') * 1000000
+        ];
         
         if (false === empty($input->getOption('extras'))) {
             foreach ($input->getOption('extras') as $value) {
