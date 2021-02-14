@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+#### 1.3.0 (2021-02-14)
+
+* Added `--extras` options to the CLI `oka:worker:run-worker`.
+
 #### 1.2.0 (2021-02-13)
 
 * Added `oka_worker.worker_manager` service.
