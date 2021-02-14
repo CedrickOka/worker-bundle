@@ -144,8 +144,8 @@ EOF
             foreach ($input->getOption('extras') as $value) {
                 $option = explode('=', $value);
                 
-                if (true === isset($option[0]) && true === isset($option[1])) {
-                    $options[$option[0]] = $option[1];
+                if (true === isset($option[0])) {
+                    $options[$option[0]] = $option[1] ?? true;
                 }
             }
         }
