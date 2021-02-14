@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+#### 1.4.0 (2021-02-14)
+
+* Improves `--extras` optins handling.
+
 #### 1.3.0 (2021-02-14)
 
 * Added `--extras` options to the CLI `oka:worker:run-worker`.
