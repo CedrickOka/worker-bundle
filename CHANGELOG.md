@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+#### 1.5.0 (2021-03-28)
+
+* Added tags features.
+
 #### 1.4.0 (2021-02-14)
 
 * Improves `--extras` optins handling.
