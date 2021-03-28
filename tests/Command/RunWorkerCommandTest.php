@@ -34,7 +34,7 @@ class RunWorkerCommandTest extends KernelTestCase
     /**
      * @covers
      */
-    public function testThatCanRunWorkerWithTimeLimitOfThreeSeconds()
+    public function testThatCanRunWorkerWithTimeLimitOfOneSeconds()
     {
         $this->commandTester->execute([
             'workerName' => 'noop',

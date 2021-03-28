@@ -7,7 +7,7 @@ use Oka\WorkerBundle\AbstractWorker;
 /**
  * @author Cedrick Oka Baidai <okacedrick@gmail.com>
  */
-class TestWorker extends AbstractWorker
+class NoopWorker extends AbstractWorker
 {
     public static function getName(): string
     {

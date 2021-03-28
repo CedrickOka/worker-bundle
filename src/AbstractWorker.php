@@ -13,11 +13,24 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 abstract class AbstractWorker implements WorkerInterface
 {
     private $eventDispatcher;
+    private $tags = [];
     private $shouldStop = false;
     
     public function __construct(EventDispatcherInterface $eventDispatcher = null)
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+    
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+    
+    public function setTags(array $tags): self
+    {
+        $this->tags = $tags;
+        
+        return $this;
     }
     
     public function beforeRun(array $options = []): void
@@ -26,16 +39,14 @@ abstract class AbstractWorker implements WorkerInterface
     
     public function run(array $options = []): void
     {
-        $options = array_merge([
-            'sleep' => 1000000,
-        ], $options);
+        $options = array_merge(['sleep' => 1000000], $options);
         
         $this->dispatchEvent(new WorkerStartedEvent($this));
         
         while (false === $this->shouldStop) {
-            $mustBeDeffered = $this->doRun($options);
+            $mustBeDeffered = (bool) $this->doRun($options);
             
-            $this->dispatchEvent(new WorkerRunningEvent($this, (bool) $mustBeDeffered));
+            $this->dispatchEvent(new WorkerRunningEvent($this, $mustBeDeffered));
             
             if (true === $mustBeDeffered) {
                 usleep($options['sleep']);

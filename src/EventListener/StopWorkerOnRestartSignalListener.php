@@ -7,6 +7,7 @@ use Oka\WorkerBundle\Event\WorkerStartedEvent;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Oka\WorkerBundle\WorkerInterface;
 
 /**
  * @author Ryan Weaver <ryan@symfonycasts.com>
@@ -15,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
 {
     public const RESTART_REQUESTED_TIMESTAMP_KEY = 'oka_worker.workers.restart_requested_timestamp';
-    
+
     private $cachePool;
     private $logger;
     private $workerStartedAt;
@@ -33,9 +34,9 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
 
     public function onWorkerRunning(WorkerRunningEvent $event): void
     {
-        if (true === $this->shouldRestart() || true === $this->shouldRestart($event->getWorker()::getName())) {
+        if (true === $this->shouldRestart() || true === $this->shouldRestart($event->getWorker())) {
             $event->getWorker()->stop();
-            
+
             if (null !== $this->logger) {
                 $this->logger->info('Worker stopped because a restart was requested.');
             }
@@ -50,12 +51,12 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
         ];
     }
 
-    private function shouldRestart(string $workerName = null): bool
+    private function shouldRestart(WorkerInterface $worker = null): bool
     {
         $cacheItem = $this->cachePool->getItem(
-            null === $workerName ?
+            null === $worker ?
             self::RESTART_REQUESTED_TIMESTAMP_KEY :
-            sprintf('%s.%s', self::RESTART_REQUESTED_TIMESTAMP_KEY, $workerName)
+            sprintf('%s.%s', self::RESTART_REQUESTED_TIMESTAMP_KEY, $worker::getName())
         );
         
         if (false === $cacheItem->isHit()) {
@@ -63,6 +64,18 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
             return false;
         }
 
-        return $this->workerStartedAt < $cacheItem->get();
+        $restartRequested = $cacheItem->get();
+        
+        if ($this->workerStartedAt > $restartRequested['issuedAt']) {
+            return false;
+        }
+
+        if (null === $worker || true === empty($restartRequested['tags'])) {
+            return true;
+        }
+
+        $diff = array_diff($restartRequested['tags'], $worker->getTags());
+
+        return count($diff) !== count($restartRequested['tags']);
     }
 }

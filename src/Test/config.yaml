@@ -26,7 +26,7 @@ oka_worker:
     cache_pool_id: cache.app
 
 services:
-    Oka\WorkerBundle\Test\TestWorker:
+    Oka\WorkerBundle\Test\NoopWorker:
         arguments:
           - '@event_dispatcher'
         tags: ['oka_worker.worker']

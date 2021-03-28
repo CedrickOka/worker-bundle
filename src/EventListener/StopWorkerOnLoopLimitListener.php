@@ -30,7 +30,7 @@ class StopWorkerOnLoopLimitListener implements EventSubscriberInterface
 
     public function onWorkerRunning(WorkerRunningEvent $event): void
     {
-        if (!$event->isWorkerIdle() && ++$this->processedLoops >= $this->maximumNumberOfLoops) {
+        if (false === $event->isWorkerIdle() && ++$this->processedLoops >= $this->maximumNumberOfLoops) {
             $this->processedLoops = 0;
             $event->getWorker()->stop();
 

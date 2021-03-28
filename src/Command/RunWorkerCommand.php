@@ -7,9 +7,7 @@ use Oka\WorkerBundle\EventListener\StopWorkerOnMemoryLimitListener;
 use Oka\WorkerBundle\EventListener\StopWorkerOnTimeLimitListener;
 use Oka\WorkerBundle\Service\WorkerManager;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\RuntimeException;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -22,19 +20,17 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @author Samuel Roze <samuel.roze@gmail.com>
  * @author Cedrick Oka Baidai <okacedrick@gmail.com>
  */
-class RunWorkerCommand extends Command
+class RunWorkerCommand extends WorkerCommand
 {
     protected static $defaultName = 'oka:worker:run-worker';
     
-    private $workerManager;
     private $eventDispatcher;
     private $logger;
 
     public function __construct(WorkerManager $workerManager, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger = null)
     {
-        parent::__construct();
+        parent::__construct($workerManager);
         
-        $this->workerManager = $workerManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->logger = $logger;
     }
@@ -44,15 +40,14 @@ class RunWorkerCommand extends Command
      */
     protected function configure(): void
     {
+        parent::configure();
+        
         $this
-            ->setDefinition([
-                new InputArgument('workerName', InputArgument::REQUIRED, 'Name of the worker to run'),
-                new InputOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the number of processed loops'),
-                new InputOption('memory-limit', 'm', InputOption::VALUE_REQUIRED, 'The memory limit the worker can consume'),
-                new InputOption('time-limit', 't', InputOption::VALUE_REQUIRED, 'The time limit in seconds the worker can run'),
-                new InputOption('sleep', null, InputOption::VALUE_REQUIRED, 'Seconds to sleep before asking for new task after no messages were found', 1),
-                new InputOption('extras', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Extra options to pass to the worker during run'),
-            ])
+            ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the number of processed loops')
+            ->addOption('memory-limit', 'm', InputOption::VALUE_REQUIRED, 'The memory limit the worker can consume')
+            ->addOption('time-limit', 't', InputOption::VALUE_REQUIRED, 'The time limit in seconds the worker can run')
+            ->addOption('sleep', null, InputOption::VALUE_REQUIRED, 'Seconds to sleep before asking for new task after no messages were found', 1)
+            ->addOption('extras', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Extra options to pass to the worker during run')
             ->setDescription('Runs worker')
             ->setHelp(<<<EOF
 The <info>%command.name%</info> command runs worker.
@@ -74,6 +69,10 @@ Use the --time-limit option to stop the worker when the given time limit (in sec
 Use the --extras option to define options to pass to the worker during run:
 
     <info>php %command.full_name% <workerName> --extras=name=value</info>
+
+Use the --tags option to define tags list to pass to the worker during run:
+
+    <info>php %command.full_name% <workerName> --tags=web --tags=mobile</info>
 EOF
             )
         ;
@@ -137,11 +136,11 @@ EOF
         if (OutputInterface::VERBOSITY_VERBOSE > $output->getVerbosity()) {
             $io->comment('Re-run the command with a -vv option to see logs about consumed messages.');
         }
-        
+
         $options = [
             'sleep' => $input->getOption('sleep') * 1000000
         ];
-        
+
         if (false === empty($input->getOption('extras'))) {
             foreach ($input->getOption('extras') as $value) {
                 $option = explode('=', $value);
@@ -151,8 +150,8 @@ EOF
                 }
             }
         }
-
-        $this->workerManager->execute($input->getArgument('workerName'), $options);
+        
+        $this->workerManager->execute($input->getArgument('workerName'), $options, $input->getOption('tags'));
 
         return 0;
     }

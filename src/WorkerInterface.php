@@ -8,6 +8,11 @@ namespace Oka\WorkerBundle;
 interface WorkerInterface
 {
     /**
+     * Gets worker tags list
+     */
+    public function getTags(): array;
+    
+    /**
      * Execute before run.
      */
     public function beforeRun(array $options = []): void;
