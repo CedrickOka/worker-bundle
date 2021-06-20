@@ -12,14 +12,21 @@ use Oka\WorkerBundle\WorkerInterface;
 final class WorkerStartedEvent
 {
     private $worker;
+    private $options;
 
-    public function __construct(WorkerInterface $worker)
+    public function __construct(WorkerInterface $worker, array $options = [])
     {
         $this->worker = $worker;
+        $this->options = $options;
     }
 
     public function getWorker(): WorkerInterface
     {
         return $this->worker;
+    }
+    
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 }

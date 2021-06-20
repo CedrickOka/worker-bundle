@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+#### 1.6.0 (2021-06-20)
+
+* Modified `App\Event\WorkerStartedEvent` constructor.
+
 #### 1.5.0 (2021-03-28)
 
 * Added tags features.

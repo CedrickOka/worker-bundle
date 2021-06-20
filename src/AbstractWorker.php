@@ -41,7 +41,7 @@ abstract class AbstractWorker implements WorkerInterface
     {
         $options = array_merge(['sleep' => 1000000], $options);
         
-        $this->dispatchEvent(new WorkerStartedEvent($this));
+        $this->dispatchEvent(new WorkerStartedEvent($this, $options));
         
         while (false === $this->shouldStop) {
             $mustBeDeffered = (bool) $this->doRun($options);
