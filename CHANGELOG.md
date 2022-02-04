@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+#### 1.7.0 (2022-04-02)
+
+* Updated bundle directory structure.
+
 #### 1.6.0 (2021-06-20)
 
 * Modified `App\Event\WorkerStartedEvent` constructor.

@@ -27,17 +27,17 @@
 	},
 	"require" : {
 		"php" : ">=7.4",
-		"symfony/cache" : "^4.4 || ^5.0",
-		"symfony/config" : "^4.4 || ^5.0",
-		"symfony/console" : "^4.4 || ^5.0",
-		"symfony/dependency-injection" : "^4.4 || ^5.0",
-		"symfony/event-dispatcher" : "^4.4 || ^5.0",
-		"symfony/http-kernel" : "^4.4 || ^5.0"
+		"symfony/cache" : "^4.4 || ^5.4",
+		"symfony/config" : "^4.4 || ^5.4",
+		"symfony/console" : "^4.4 || ^5.4",
+		"symfony/dependency-injection" : "^4.4 || ^5.4",
+		"symfony/event-dispatcher" : "^4.4 || ^5.4",
+		"symfony/http-kernel" : "^4.4 || ^5.4"
 	},
 	"require-dev" : {
-		"symfony/framework-bundle" : "^4.4 || ^5.0",
-		"symfony/phpunit-bridge" : "^4.4 || ^5.0",
-		"symfony/yaml" : "^4.4 || ^5.0"
+		"symfony/framework-bundle" : "^4.4 || ^5.4",
+		"symfony/phpunit-bridge" : "^4.4 || ^5.4",
+		"symfony/yaml" : "^4.4 || ^5.4"
 	},
 	"config" : {
 		"sort-packages" : true
@@ -51,6 +51,6 @@
 		}
 	},
 	"support" : {
-		"docs" : "https://github.com/CedrickOka/worker-bundle/blob/master/src/Resources/doc/index.md"
+		"docs" : "https://github.com/CedrickOka/worker-bundle/blob/master/docs/index.md"
 	}
 }
