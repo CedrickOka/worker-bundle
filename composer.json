@@ -14,7 +14,7 @@
 	],
 	"autoload" : {
 		"psr-4" : {
-			"Oka\\WorkerBundle\\" : "src"
+			"Oka\\WorkerBundle\\" : "src/"
 		},
 		"exclude-from-classmap" : [
 			"/tests/"
