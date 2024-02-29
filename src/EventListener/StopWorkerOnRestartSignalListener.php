@@ -34,11 +34,20 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
 
     public function onWorkerRunning(WorkerRunningEvent $event): void
     {
-        if (true === $this->shouldRestart() || true === $this->shouldRestart($event->getWorker())) {
-            $event->getWorker()->stop();
+        $worker = $event->getWorker();
+
+        if (true === $this->shouldRestart($worker)) {
+            $worker->stop();
 
             if (null !== $this->logger) {
-                $this->logger->info('Worker stopped because a restart was requested.');
+                $this->logger->info(
+                    'Worker "{name}" stopped because a restart was requested.',
+                    [
+                        'name' => $worker::getName(),
+                        'id' => $worker->getId(),
+                        'tags' => $worker->getTags(),
+                    ]
+                );
             }
         }
     }
@@ -51,13 +60,9 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
         ];
     }
 
-    private function shouldRestart(?WorkerInterface $worker = null): bool
+    private function shouldRestart(WorkerInterface $worker): bool
     {
-        $cacheItem = $this->cachePool->getItem(
-            null === $worker ?
-            self::RESTART_REQUESTED_TIMESTAMP_KEY :
-            sprintf('%s.%s', self::RESTART_REQUESTED_TIMESTAMP_KEY, $worker::getName())
-        );
+        $cacheItem = $this->cachePool->getItem(self::RESTART_REQUESTED_TIMESTAMP_KEY);
 
         if (false === $cacheItem->isHit()) {
             // no restart has ever been scheduled
@@ -69,13 +74,22 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
         if ($this->workerStartedAt > $restartRequested['issuedAt']) {
             return false;
         }
+        if (isset($restartRequested['workerName']) && $worker::getName() !== $restartRequested['workerName']) {
+            return false;
+        }
 
-        if (null === $worker || true === empty($restartRequested['tags'])) {
+        if (empty($restartRequested['criteria'])) {
+            return true;
+        }
+        if (isset($restartRequested['criteria']['id']) && $worker->getId() === $restartRequested['criteria']['id']) {
+            return true;
+        }
+        if (isset($restartRequested['criteria']['tags']) && empty($restartRequested['criteria']['tags'])) {
             return true;
         }
 
-        $diff = array_diff($restartRequested['tags'], $worker->getTags());
+        $diff = array_diff($restartRequested['criteria']['tags'], $worker->getTags());
 
-        return count($diff) !== count($restartRequested['tags']);
+        return count($diff) !== count($restartRequested['criteria']['tags']);
     }
 }

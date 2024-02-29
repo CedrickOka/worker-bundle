@@ -44,35 +44,24 @@ class WorkerManager
         return $worker;
     }
 
-    public function stopAll(array $tags = []): void
+    public function stop(?string $workerName = null, array $criteria = []): void
     {
         if (null === $this->cachePool) {
             throw new \LogicException('Define "oka.worker.cache_pool_id" configuration value for use this feature.');
+        }
+
+        $item = [
+            'issuedAt' => microtime(true),
+            'criteria' => $criteria,
+        ];
+
+        if (null !== $workerName) {
+            $item['workerName'] = $workerName;
         }
 
         $cacheItem = $this->cachePool->getItem(StopWorkerOnRestartSignalListener::RESTART_REQUESTED_TIMESTAMP_KEY);
-        $cacheItem->set($this->createRequestedTimestampItem($tags));
+        $cacheItem->set($item);
 
         $this->cachePool->save($cacheItem);
-    }
-
-    public function stopOne(string $workerName, array $tags = []): void
-    {
-        if (null === $this->cachePool) {
-            throw new \LogicException('Define "oka.worker.cache_pool_id" configuration value for use this feature.');
-        }
-
-        $cacheItem = $this->cachePool->getItem(sprintf('%s.%s', StopWorkerOnRestartSignalListener::RESTART_REQUESTED_TIMESTAMP_KEY, $workerName));
-        $cacheItem->set($this->createRequestedTimestampItem($tags));
-
-        $this->cachePool->save($cacheItem);
-    }
-
-    private function createRequestedTimestampItem(array $tags = []): array
-    {
-        return [
-            'issuedAt' => microtime(true),
-            'tags' => $tags,
-        ];
     }
 }
