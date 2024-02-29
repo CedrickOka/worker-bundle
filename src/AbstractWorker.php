@@ -25,6 +25,11 @@ abstract class AbstractWorker implements WorkerInterface
     private $tags = [];
 
     /**
+     * @var array
+     */
+    private $attributes = [];
+
+    /**
      * @var int the time in microseconds to sleep after no task processed
      */
     private $loopDelay = 1000000;
@@ -66,6 +71,11 @@ abstract class AbstractWorker implements WorkerInterface
     public function getAttributes(): array
     {
         return $this->attributes;
+    }
+
+    public function hasAttribute(string $key): bool
+    {
+        return isset($this->attributes[$key]);
     }
 
     public function addAttribute(string $key, $value): self
