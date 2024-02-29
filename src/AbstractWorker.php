@@ -73,6 +73,11 @@ abstract class AbstractWorker implements WorkerInterface
         return $this->attributes;
     }
 
+    public function getAttribute(string $key, $defaultValue = null)
+    {
+        return $this->attributes[$key] ?? $defaultValue;
+    }
+
     public function hasAttribute(string $key): bool
     {
         return isset($this->attributes[$key]);
