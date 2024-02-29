@@ -8,19 +8,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * @author Cedrick Oka Baidai <okacedrick@gmail.com>        
+ * @author Cedrick Oka Baidai <okacedrick@gmail.com>
  */
 class StopWorkersCommand extends WorkerCommand
 {
     protected static $defaultName = 'oka:worker:stop-worker';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         parent::configure();
-        
+
         $this
             ->setDescription('Stops workers after their current loop')
             ->setHelp(<<<'EOF'
@@ -40,15 +37,12 @@ EOF
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output);
 
-        $input->getArgument('workerName') ? 
-            $this->workerManager->stopOne($input->getArgument('workerName'), $input->getOption('tags')) : 
+        $input->getArgument('workerName') ?
+            $this->workerManager->stopOne($input->getArgument('workerName'), $input->getOption('tags')) :
             $this->workerManager->stopAll($input->getOption('tags'));
 
         $io->success('Signal successfully sent to stop any running workers.');

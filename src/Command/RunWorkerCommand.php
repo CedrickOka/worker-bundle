@@ -23,31 +23,28 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class RunWorkerCommand extends WorkerCommand
 {
     protected static $defaultName = 'oka:worker:run-worker';
-    
+
     private $eventDispatcher;
     private $logger;
 
-    public function __construct(WorkerManager $workerManager, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger = null)
+    public function __construct(WorkerManager $workerManager, EventDispatcherInterface $eventDispatcher, ?LoggerInterface $logger = null)
     {
         parent::__construct($workerManager);
-        
+
         $this->eventDispatcher = $eventDispatcher;
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         parent::configure();
-        
+
         $this
             ->addOption('limit', 'l', InputOption::VALUE_REQUIRED, 'Limit the number of processed loops')
             ->addOption('memory-limit', 'm', InputOption::VALUE_REQUIRED, 'The memory limit the worker can consume')
             ->addOption('time-limit', 't', InputOption::VALUE_REQUIRED, 'The time limit in seconds the worker can run')
             ->addOption('sleep', null, InputOption::VALUE_REQUIRED, 'Seconds to sleep before asking for new task after no messages were found', 1)
-            ->addOption('extras', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Extra options to pass to the worker during run')
+            ->addOption('extras', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Extra options to pass to the worker during run')
             ->setDescription('Runs worker')
             ->setHelp(<<<EOF
 The <info>%command.name%</info> command runs worker.
@@ -78,9 +75,6 @@ EOF
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output);
@@ -88,7 +82,7 @@ EOF
         if (!$input->getArgument('workerName')) {
             $io->block('Which worker do you want to run?', null, 'fg=white;bg=blue', ' ', true);
             $io->writeln('Enter which worker you want to run.');
-            
+
             $question = new Question('Enter worker name to run:');
             $input->setArgument('workerName', $io->askQuestion($question));
         }
@@ -98,13 +92,10 @@ EOF
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $stopsWhen = [];
-        
+
         if ($limit = $input->getOption('limit')) {
             $stopsWhen[] = "processed {$limit} loops";
             $this->eventDispatcher->addSubscriber(new StopWorkerOnLoopLimitListener($limit, $this->logger));
@@ -137,21 +128,19 @@ EOF
             $io->comment('Re-run the command with a -vv option to see logs about consumed messages.');
         }
 
-        $options = [
-            'sleep' => $input->getOption('sleep') * 1000000
-        ];
+        $options = [];
 
         if (false === empty($input->getOption('extras'))) {
             foreach ($input->getOption('extras') as $value) {
                 $option = explode('=', $value);
-                
+
                 if (true === isset($option[0])) {
                     $options[$option[0]] = $option[1] ?? true;
                 }
             }
         }
-        
-        $this->workerManager->execute($input->getArgument('workerName'), $options, $input->getOption('tags'));
+
+        $this->workerManager->start($input->getArgument('workerName'), $input->getOption('tags'), $options, $input->getOption('sleep') * 1000000);
 
         return 0;
     }
@@ -160,7 +149,7 @@ EOF
     {
         $memoryLimit = strtolower($memoryLimit);
         $max = ltrim($memoryLimit, '+');
-        
+
         if (0 === strpos($max, '0x')) {
             $max = \intval($max, 16);
         } elseif (0 === strpos($max, '0')) {
@@ -171,11 +160,11 @@ EOF
 
         switch (substr(rtrim($memoryLimit, 'b'), -1)) {
             case 't': $max *= 1024;
-            // no break
+                // no break
             case 'g': $max *= 1024;
-            // no break
+                // no break
             case 'm': $max *= 1024;
-            // no break
+                // no break
             case 'k': $max *= 1024;
         }
 

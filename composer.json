@@ -1,56 +1,59 @@
 {
-	"name" : "coka/worker-bundle",
-	"type" : "symfony-bundle",
-	"description" : "Run worker",
-	"homepage" : "https://github.com/CedrickOka/worker-bundle",
-	"license" : "MIT",
-	"keywords" : [
-		"worker"
-	],
-	"authors" : [{
-			"name" : "Cedrick Oka",
-			"email" : "okacedrick@gmail.com"
-		}
-	],
-	"autoload" : {
-		"psr-4" : {
-			"Oka\\WorkerBundle\\" : "src/"
-		},
-		"exclude-from-classmap" : [
-			"/tests/"
-		]
-	},
-	"autoload-dev" : {
-		"psr-4" : {
-			"Oka\\WorkerBundle\\Tests\\" : "tests/"
-		}
-	},
-	"require" : {
-		"php" : ">=7.4",
-		"symfony/cache" : "^4.4 || ^5.4",
-		"symfony/config" : "^4.4 || ^5.4",
-		"symfony/console" : "^4.4 || ^5.4",
-		"symfony/dependency-injection" : "^4.4 || ^5.4",
-		"symfony/event-dispatcher" : "^4.4 || ^5.4",
-		"symfony/http-kernel" : "^4.4 || ^5.4"
-	},
-	"require-dev" : {
-		"symfony/framework-bundle" : "^4.4 || ^5.4",
-		"symfony/phpunit-bridge" : "^4.4 || ^5.4",
-		"symfony/yaml" : "^4.4 || ^5.4"
-	},
-	"config" : {
-		"sort-packages" : true
-	},
-	"extra" : {
-		"branch-alias" : {
-			"dev-master" : "1.x-dev"
-		},
-		"symfony" : {
-			"allow-contrib" : "true"
-		}
-	},
-	"support" : {
-		"docs" : "https://github.com/CedrickOka/worker-bundle/blob/master/docs/index.md"
-	}
+    "name" : "coka/worker-bundle",
+    "type" : "symfony-bundle",
+    "description" : "Run worker",
+    "homepage" : "https://github.com/CedrickOka/worker-bundle",
+    "license" : "MIT",
+    "keywords" : [
+        "worker"
+    ],
+    "authors" : [{
+            "name" : "Cedrick Oka",
+            "email" : "okacedrick@gmail.com"
+        }
+    ],
+    "autoload" : {
+        "psr-4" : {
+            "Oka\\WorkerBundle\\" : "src/"
+        },
+        "exclude-from-classmap" : [
+            "/tests/"
+        ]
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "Oka\\WorkerBundle\\Tests\\" : "tests/"
+        }
+    },
+    "require" : {
+        "php": ">=7.4",
+        "ramsey/uuid": "^4.7",
+        "symfony/cache": "^4.4 || ^5.4",
+        "symfony/config": "^4.4 || ^5.4",
+        "symfony/console": "^4.4 || ^5.4",
+        "symfony/dependency-injection": "^4.4 || ^5.4",
+        "symfony/event-dispatcher": "^4.4 || ^5.4",
+        "symfony/http-kernel": "^4.4 || ^5.4"
+    },
+    "require-dev" : {
+        "phpunit/phpunit": "^9.6",
+        "symfony/framework-bundle": "^4.4 || ^5.4",
+        "symfony/monolog-bundle": "^3.10",
+        "symfony/phpunit-bridge": "^4.4 || ^5.4",
+        "symfony/yaml": "^4.4 || ^5.4"
+    },
+    "config" : {
+        "sort-packages" : true
+    },
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "1.x-dev"
+        },
+        "symfony" : {
+            "allow-contrib" : "true"
+        }
+    },
+    "support" : {
+        "docs" : "https://github.com/CedrickOka/worker-bundle/blob/master/docs/index.md"
+    }
 }

@@ -16,7 +16,7 @@ class StopWorkerOnSigKillSignalListener implements EventSubscriberInterface
         $handler = static function () use ($event) {
             $event->getWorker()->stop();
         };
-        
+
         pcntl_signal(\SIGTERM, $handler);
         pcntl_signal(\SIGQUIT, $handler);
         pcntl_signal(\SIGINT, $handler);

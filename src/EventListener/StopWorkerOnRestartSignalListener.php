@@ -4,10 +4,10 @@ namespace Oka\WorkerBundle\EventListener;
 
 use Oka\WorkerBundle\Event\WorkerRunningEvent;
 use Oka\WorkerBundle\Event\WorkerStartedEvent;
+use Oka\WorkerBundle\WorkerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Oka\WorkerBundle\WorkerInterface;
 
 /**
  * @author Ryan Weaver <ryan@symfonycasts.com>
@@ -21,7 +21,7 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
     private $logger;
     private $workerStartedAt;
 
-    public function __construct(CacheItemPoolInterface $cachePool, LoggerInterface $logger = null)
+    public function __construct(CacheItemPoolInterface $cachePool, ?LoggerInterface $logger = null)
     {
         $this->cachePool = $cachePool;
         $this->logger = $logger;
@@ -51,21 +51,21 @@ class StopWorkerOnRestartSignalListener implements EventSubscriberInterface
         ];
     }
 
-    private function shouldRestart(WorkerInterface $worker = null): bool
+    private function shouldRestart(?WorkerInterface $worker = null): bool
     {
         $cacheItem = $this->cachePool->getItem(
             null === $worker ?
             self::RESTART_REQUESTED_TIMESTAMP_KEY :
             sprintf('%s.%s', self::RESTART_REQUESTED_TIMESTAMP_KEY, $worker::getName())
         );
-        
+
         if (false === $cacheItem->isHit()) {
             // no restart has ever been scheduled
             return false;
         }
 
         $restartRequested = $cacheItem->get();
-        
+
         if ($this->workerStartedAt > $restartRequested['issuedAt']) {
             return false;
         }

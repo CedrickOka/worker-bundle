@@ -16,9 +16,13 @@ class StopWorkerOnLoopLimitListener implements EventSubscriberInterface
 {
     private $maximumNumberOfLoops;
     private $logger;
+
+    /**
+     * @var int
+     */
     private $processedLoops = 0;
 
-    public function __construct(int $maximumNumberOfLoops, LoggerInterface $logger = null)
+    public function __construct(int $maximumNumberOfLoops, ?LoggerInterface $logger = null)
     {
         $this->maximumNumberOfLoops = $maximumNumberOfLoops;
         $this->logger = $logger;
@@ -36,8 +40,8 @@ class StopWorkerOnLoopLimitListener implements EventSubscriberInterface
 
             if (null !== $this->logger) {
                 $this->logger->info('Worker ({workerName}) stopped due to maximum count of {count} loops processed', [
-                    'workerName' => $event->getWorker()::getName(), 
-                    'count' => $this->maximumNumberOfLoops
+                    'workerName' => $event->getWorker()::getName(),
+                    'count' => $this->maximumNumberOfLoops,
                 ]);
             }
         }

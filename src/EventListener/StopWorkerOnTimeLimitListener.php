@@ -18,7 +18,7 @@ class StopWorkerOnTimeLimitListener implements EventSubscriberInterface
     private $logger;
     private $endTime;
 
-    public function __construct(int $timeLimitInSeconds, LoggerInterface $logger = null)
+    public function __construct(int $timeLimitInSeconds, ?LoggerInterface $logger = null)
     {
         $this->timeLimitInSeconds = $timeLimitInSeconds;
         $this->logger = $logger;
@@ -33,11 +33,11 @@ class StopWorkerOnTimeLimitListener implements EventSubscriberInterface
     {
         if ($this->endTime < microtime(true)) {
             $event->getWorker()->stop();
-            
+
             if (null !== $this->logger) {
                 $this->logger->info('Worker ({workerName}) stopped due to time limit of {timeLimit}s exceeded', [
-                    'workerName' => $event->getWorker()::getName(), 
-                    'timeLimit' => $this->timeLimitInSeconds
+                    'workerName' => $event->getWorker()::getName(),
+                    'timeLimit' => $this->timeLimitInSeconds,
                 ]);
             }
         }

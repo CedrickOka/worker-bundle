@@ -17,7 +17,7 @@
     </include>
   </coverage>
   <php>
-    <env name="KERNEL_CLASS" value="Oka\WorkerBundle\Test\AppKernel"/>
+    <env name="KERNEL_CLASS" value="Oka\WorkerBundle\Tests\AppKernel"/>
   </php>
   <testsuites>
     <testsuite name="default">

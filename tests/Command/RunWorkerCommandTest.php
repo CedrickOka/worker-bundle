@@ -13,24 +13,24 @@ use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 class RunWorkerCommandTest extends KernelTestCase
 {
     /**
-     * @var \Symfony\Component\Console\Tester\CommandTester
+     * @var CommandTester
      */
     private $commandTester;
-    
+
     public function setUp(): void
     {
         $kernel = static::createKernel();
         $application = new Application($kernel);
-        
+
         $command = $application->find('oka:worker:run-worker');
         $this->commandTester = new CommandTester($command);
     }
-    
+
     public function tearDown(): void
     {
         $this->commandTester = null;
     }
-    
+
     /**
      * @covers
      */
@@ -39,13 +39,13 @@ class RunWorkerCommandTest extends KernelTestCase
         $this->commandTester->execute([
             'workerName' => 'noop',
             '--time-limit' => 1,
-            '--extras' => ['x=n', 'y=n']
+            '--extras' => ['x=n', 'y=n'],
         ]);
-        
+
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('been running for 1s', $output);
     }
-    
+
     /**
      * @covers
      */
@@ -53,13 +53,13 @@ class RunWorkerCommandTest extends KernelTestCase
     {
         $this->commandTester->execute([
             'workerName' => 'noop',
-            '--memory-limit' => '1M'
+            '--memory-limit' => '1M',
         ]);
-        
+
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('exceeded 1M of memory', $output);
     }
-    
+
     /**
      * @covers
      */
@@ -67,22 +67,22 @@ class RunWorkerCommandTest extends KernelTestCase
     {
         $this->commandTester->execute([
             'workerName' => 'noop',
-            '--limit' => '10'
+            '--limit' => '10',
         ]);
-        
+
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('processed 10 loops', $output);
     }
-    
+
     /**
      * @covers
      */
     public function testThatCannotRunWorkerWithNameNotFound()
     {
         $this->expectException(ServiceNotFoundException::class);
-        
+
         $this->commandTester->execute([
-            'workerName' => 'test'
+            'workerName' => 'test',
         ]);
     }
 }

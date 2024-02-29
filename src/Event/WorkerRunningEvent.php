@@ -5,28 +5,21 @@ namespace Oka\WorkerBundle\Event;
 use Oka\WorkerBundle\WorkerInterface;
 
 /**
- * Dispatched after the worker processed a message or didn't receive a message at all.
- *
  * @author Cedrick Oka Baidai <okacedrick@gmail.com>
  */
-final class WorkerRunningEvent
+final class WorkerRunningEvent extends WorkerEvent
 {
-    private $worker;
     private $isWorkerIdle;
 
     public function __construct(WorkerInterface $worker, bool $isWorkerIdle)
     {
-        $this->worker = $worker;
+        parent::__construct($worker);
+
         $this->isWorkerIdle = $isWorkerIdle;
     }
 
-    public function getWorker(): WorkerInterface
-    {
-        return $this->worker;
-    }
-
     /**
-     * Returns true when no message has been received by the worker.
+     * Returns true when no task has been processed by the worker.
      */
     public function isWorkerIdle(): bool
     {

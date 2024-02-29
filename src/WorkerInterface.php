@@ -8,35 +8,42 @@ namespace Oka\WorkerBundle;
 interface WorkerInterface
 {
     /**
-     * Gets worker tags list
+     * Gets worker identifier.
+     */
+    public function getId(): string;
+
+    /**
+     * Gets worker tags list.
      */
     public function getTags(): array;
-    
+
+    /**
+     * Gets worker attributes list.
+     */
+    public function getAttributes(): array;
+
     /**
      * Execute before run.
      */
-    public function beforeRun(array $options = []): void;
-    
+    public function beforeRun(): void;
+
     /**
      * Execute worker logic on each loop.
-     *
-     * Valid options are:
-     *  * sleep (default: 1000000): Time in microseconds to sleep after no messages are found
      */
-    public function run(array $options = []): void;
-    
+    public function run(): void;
+
     /**
      * Execute after run.
      */
-    public function afterRun(array $options = []): void;
-    
+    public function afterRun(): void;
+
     /**
-     * Stop the worker
+     * Stop the worker.
      */
     public function stop(): void;
-    
+
     /**
-     * Get the worker name
+     * Get the worker name.
      */
     public static function getName(): string;
 }

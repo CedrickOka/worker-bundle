@@ -13,11 +13,11 @@ use Symfony\Component\Console\Input\InputOption;
 abstract class WorkerCommand extends Command
 {
     protected $workerManager;
-    
+
     public function __construct(WorkerManager $workerManager)
     {
         parent::__construct();
-        
+
         $this->workerManager = $workerManager;
     }
 
@@ -26,7 +26,7 @@ abstract class WorkerCommand extends Command
         $this
             ->setDefinition([
                 new InputArgument('workerName', InputArgument::OPTIONAL, 'Name of the worker to stop', null),
-                new InputOption('tags', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'The tags list to pass at the worker', [])
+                new InputOption('tags', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'The tags list to pass at the worker', []),
             ]);
     }
 }

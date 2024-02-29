@@ -13,8 +13,8 @@ class NoopWorker extends AbstractWorker
     {
         return 'noop';
     }
-    
-    protected function doRun(array $options = []): bool
+
+    protected function doRun(): bool
     {
         return false;
     }

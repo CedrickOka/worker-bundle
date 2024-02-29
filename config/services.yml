@@ -9,9 +9,6 @@ services:
         arguments:
           - !tagged_locator {tag: 'oka_worker.worker', index_by: 'name', default_index_method: 'getName'}
 
-    Oka\WorkerBundle\EventListener\DispatchPcntlSignalListener:
-        tags: ['kernel.event_subscriber']
-
     Oka\WorkerBundle\Command\RunWorkerCommand:
         arguments:
           - '@oka_worker.worker_manager'
@@ -21,6 +18,9 @@ services:
     Oka\WorkerBundle\Command\StopWorkersCommand:
         arguments: ['@oka_worker.worker_manager']
         tags: ['console.command']
+
+    Oka\WorkerBundle\EventListener\DispatchPcntlSignalListener:
+        tags: ['kernel.event_subscriber']
 
     Oka\WorkerBundle\AbstractWorker: '@oka_worker.abstract_worker'
     Oka\WorkerBundle\Service\WorkerManager: '@oka_worker.worker_manager'

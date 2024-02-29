@@ -12,24 +12,24 @@ use Symfony\Component\Console\Tester\CommandTester;
 class StopWorkersCommandTest extends KernelTestCase
 {
     /**
-     * @var \Symfony\Component\Console\Tester\CommandTester
+     * @var CommandTester
      */
     private $commandTester;
-    
+
     public function setUp(): void
     {
         $kernel = static::createKernel();
         $application = new Application($kernel);
-        
+
         $command = $application->find('oka:worker:stop-worker');
         $this->commandTester = new CommandTester($command);
     }
-    
+
     public function tearDown(): void
     {
         $this->commandTester = null;
     }
-    
+
     /**
      * @covers
      */
@@ -38,18 +38,18 @@ class StopWorkersCommandTest extends KernelTestCase
         $this->commandTester->execute([
             'workerName' => 'noop',
         ]);
-        
+
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Signal successfully sent to stop any running workers.', $output);
     }
-    
+
     /**
      * @covers
      */
     public function testThatCanStopAllWorkers()
     {
         $this->commandTester->execute([]);
-        
+
         $output = $this->commandTester->getDisplay();
         $this->assertStringContainsString('Signal successfully sent to stop any running workers.', $output);
     }
